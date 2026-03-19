@@ -4,69 +4,49 @@ import axios from "axios";
 function App() {
 
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
 
-  const sendOtp = async () => {
+  const sendEmail = async () => {
 
-    const response = await axios.post(
-      "http://localhost:5000/send-otp",
-      { email }
-    );
+    if (!email) {
+      setMessage("Please enter email ❌");
+      return;
+    }
 
-    setMessage(response.data.message);
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/send-email",
+        { email }
+      );
 
-  };
+      setMessage(res.data.message);
 
-  const verifyOtp = async () => {
-
-    const response = await axios.post(
-      "http://localhost:5000/verify-otp",
-      { email, otp }
-    );
-
-    setMessage(response.data.message);
-
+    } catch (error) {
+      setMessage("Server error ❌");
+    }
   };
 
   return (
-
     <div style={{ textAlign: "center", marginTop: "100px" }}>
 
-      <h2>Email OTP Verification</h2>
+      <h2>Email Verification + Welcome Mail</h2>
 
       <input
         type="email"
-        placeholder="Enter email"
+        placeholder="Enter Gmail"
         onChange={(e) => setEmail(e.target.value)}
       />
 
       <br /><br />
 
-      <button onClick={sendOtp}>
-        Send OTP
-      </button>
-
-      <br /><br />
-
-      <input
-        type="text"
-        placeholder="Enter OTP"
-        onChange={(e) => setOtp(e.target.value)}
-      />
-
-      <br /><br />
-
-      <button onClick={verifyOtp}>
-        Verify OTP
+      <button onClick={sendEmail}>
+        Send Welcome Email
       </button>
 
       <p>{message}</p>
 
     </div>
-
   );
-
 }
 
 export default App;
